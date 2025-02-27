@@ -1,0 +1,45 @@
+version: '3'
+services:
+  demo-app:
+    build: ./back
+    volumes:
+      - ./back/dockervenv:/src/.venv
+      - ./back:/src
+    ports:
+      - 8000:8000
+    networks:
+      - app_network
+  broccoli-front:
+    # ホスト側のディレクトリをコンテナ側のディレクトリにマウントする
+    volumes:
+      - ./front/app/:/usr/src/app/
+    # Dockerfileの実行
+    build: ./front
+    # コンテナを起動させ続ける
+    tty: true
+    # コンテナ側とホスト側のポートの設定を行う
+    ports:
+      - 3001:3001
+    environment:
+      - REACT_APP_API_URL=http://backend:8000  # React 側で FastAPI の URL を環境変数に設定
+    networks:
+      - app_network
+  db:
+    image: mysql:8.0
+    platform: linux/x86_64  # M1 Macの場合必要
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'  # rootアカウントをパスワードなしで作成
+      MYSQL_DATABASE: 'demo'  # 初期データベースとしてdemoを設定
+      TZ: 'Asia/Tokyo'  # タイムゾーンを日本時間に設定
+    volumes:
+      - mysql_data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password  # MySQL8.0ではデフォルトが"caching_sha2_password"で、ドライバが非対応のため変更
+    ports:
+      - 33306:3306  # ホストマシンのポート33306を、docker内のポート3306に接続する
+    networks:
+      - app_network
+volumes:
+  mysql_data:
+networks:
+  app_network:
+    driver: bridge
