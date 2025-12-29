@@ -9,6 +9,9 @@ export default defineConfig({
     port: 3001,
     host: '0.0.0.0',
     strictPort: false,
+    fs: {
+      allow: ['..', '../../', '/']
+    }
   },
   build: {
     outDir: 'build',
