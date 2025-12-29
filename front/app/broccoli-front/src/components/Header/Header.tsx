@@ -6,12 +6,31 @@ import { Activity } from './Activity';
 
 export const Header = () => {
     const [isDark, setIsDark] = React.useState(() => {
+        try {
+            const v = sessionStorage.getItem('theme');
+            if (v) return v === 'dark';
+        } catch {
+            /* ignore */
+        }
         return document.documentElement.classList.contains('dark');
     });
 
+    React.useEffect(() => {
+        try {
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+                sessionStorage.setItem('theme', 'dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+                sessionStorage.setItem('theme', 'light');
+            }
+        } catch {
+            /* ignore */
+        }
+    }, [isDark]);
+
     const toggleDarkMode = () => {
-        setIsDark(!isDark);
-        document.documentElement.classList.toggle('dark');
+        setIsDark((s) => !s);
     };
 
     return (
