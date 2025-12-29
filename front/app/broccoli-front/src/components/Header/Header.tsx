@@ -6,17 +6,25 @@ import { Activity } from './Activity';
 
 export const Header = () => {
     return (
-        <header className="sticky top-0 inset-x-0 flex flex-wrap md:justify-start md:flex-nowrap z-[48] w-full bg-white border-b text-sm py-2.5 lg:ps-[260px] dark:bg-neutral-800 dark:border-neutral-700">
-            <nav className="px-4 sm:px-6 flex basis-full items-center w-full mx-auto">
-                <div className="me-5 lg:me-0 lg:hidden">
+        <header className="sticky top-0 z-40 w-full bg-white border-b border-gray-200 dark:bg-neutral-800 dark:border-neutral-700 shadow-sm">
+            <nav className="px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+                {/* Left section - Logo for mobile */}
+                <div className="flex items-center lg:hidden">
                     <Logo />
                 </div>
-                <div className="w-full flex items-center justify-end me-2">
-                    <div className="flex flex-row items-center justify-end gap-1">
-                        <Search />
-                        <Notification />
-                        <Activity />
-                    </div>
+                
+                {/* Center section - Title */}
+                <div className="flex-1 text-center lg:text-left">
+                    <h1 className="text-lg font-semibold text-gray-800 dark:text-white">
+                        Exercise Tracker
+                    </h1>
+                </div>
+                
+                {/* Right section - Actions */}
+                <div className="flex items-center gap-2 sm:gap-4">
+                    <Search />
+                    <Notification />
+                    <Activity />
                 </div>
             </nav>
         </header>
