@@ -40,26 +40,28 @@ export const ExerciseRecordForm = ({ onDataSubmit, onDataDelete, recordId }: Fun
     const fetchExercises = async (categoryId?: number) => {
         exerciseDispatch({ type: ActionTypes.fetch });
         let endpoint = 'exercises';
-        if (categoryId != 0) {
+        if (categoryId && categoryId !== 0) {
             endpoint = `exercises/category/${categoryId}`;
         }
         await axios.get<Exercise[]>(`${API_URL}/${endpoint}`)
             .then((response) => {
                 exerciseDispatch({ type: ActionTypes.success, payload: response.data });
                 console.log(exercisesState.exercises[0]);
-                setInputData((prevData: any) => ({
-                    ...prevData,
-                    exercise: {
-                        ...prevData.exercise,
-                        id: response.data[0].id,
-                        name: response.data[0].name,
-                        category: {
-                            ...prevData.exercise.category,
-                            id: response.data[0]?.category?.id,
-                            name: response.data[0]?.category?.name
+                if (response.data.length > 0) {
+                    setInputData((prevData: any) => ({
+                        ...prevData,
+                        exercise: {
+                            ...prevData.exercise,
+                            id: response.data[0].id,
+                            name: response.data[0].name,
+                            category: {
+                                ...prevData.exercise.category,
+                                id: response.data[0]?.category?.id,
+                                name: response.data[0]?.category?.name
+                            }
                         }
-                    }
-                }));
+                    }));
+                }
                 console.log(inputData);
             })
             .catch(() => {
@@ -74,7 +76,9 @@ export const ExerciseRecordForm = ({ onDataSubmit, onDataDelete, recordId }: Fun
     }, []);
 
     useEffect(() => {
-        fetchExercises(categoryState?.id);
+        if (categoryState?.id !== undefined && categoryState?.id !== 0) {
+            fetchExercises(categoryState.id);
+        }
     }, [categoryState?.id]);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
