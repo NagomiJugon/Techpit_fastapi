@@ -134,12 +134,12 @@ export const ExerciseRecordForm = ({ onDataSubmit, onDataDelete, recordId }: Fun
     };
 
     return (
-        <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 w-full">
+        <form className="bg-white dark:bg-neutral-800 shadow-md rounded px-8 pt-6 pb-8 w-full">
             <div className="inline-block mb-2 w-full">
-                <label className="block text-gray-700 text-sm font-bold my-1">
+                <label className="block text-gray-700 dark:text-neutral-200 text-sm font-bold my-1">
                     Target
                 </label>
-                <select className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 ps-2 pe-8 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline" id='category_id'
+                <select className="block appearance-none w-full bg-white dark:bg-neutral-700 border border-gray-400 dark:border-neutral-600 hover:border-gray-500 dark:hover:border-neutral-500 ps-2 pe-8 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline text-gray-800 dark:text-neutral-200" id='category_id'
                     name="category_id"
                     onChange={handleCategoryChange}>
                     <option key={'category_0'} value={0} data-category-id={0} data-category-name>No Category</option>
@@ -153,10 +153,10 @@ export const ExerciseRecordForm = ({ onDataSubmit, onDataDelete, recordId }: Fun
                 </select>
             </div>
             <div className="inline-block mb-2 w-full">
-                <label className="block text-gray-700 text-sm font-bold my-1">
+                <label className="block text-gray-700 dark:text-neutral-200 text-sm font-bold my-1">
                     Exercise
                 </label>
-                <select className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 ps-2 pe-8 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline" id='exercise_id'
+                <select className="block appearance-none w-full bg-white dark:bg-neutral-700 border border-gray-400 dark:border-neutral-600 hover:border-gray-500 dark:hover:border-neutral-500 ps-2 pe-8 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline text-gray-800 dark:text-neutral-200" id='exercise_id'
                     name="id" onChange={handleExerciseChange}>
                     {exercisesState.exercises.map(exercise => (
                         <option key={`exercise_${exercise.id}`} 
@@ -171,17 +171,17 @@ export const ExerciseRecordForm = ({ onDataSubmit, onDataDelete, recordId }: Fun
             </div>
             <div className="flex mb-4">
                 <div className="mb-4 w-3/5 flex-initial me-5">
-                    <label className="block text-gray-700 text-sm font-bold my-1">
+                    <label className="block text-gray-700 dark:text-neutral-200 text-sm font-bold my-1">
                         Weight (kg)
                     </label>
-                    <input className="shadow appearance-none border rounded py-2 px-3 border-gray-400 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="weight" type="text"
+                    <input className="shadow appearance-none border rounded py-2 px-3 border-gray-400 dark:border-neutral-600 text-gray-700 dark:text-neutral-200 bg-white dark:bg-neutral-700 leading-tight focus:outline-none focus:shadow-outline" id="weight" type="text"
                         name="weight" value={inputData?.weight} onChange={handleChange} />
                 </div>
                 <div className="mb-4 w-2/5">
-                    <label className="block text-gray-700 text-sm font-bold my-1">
+                    <label className="block text-gray-700 dark:text-neutral-200 text-sm font-bold my-1">
                         Reps
                     </label>
-                    <select className='block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 ps-2 pe-8 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline'
+                    <select className='block appearance-none w-full bg-white dark:bg-neutral-700 border border-gray-400 dark:border-neutral-600 hover:border-gray-500 dark:hover:border-neutral-500 ps-2 pe-8 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline text-gray-800 dark:text-neutral-200'
                         name='rep' value={inputData?.rep} onChange={handleChange}>
                         {Array.from({ length: 20 }, (_, i) => (
                             <option key={`rep_${i + 1}`} value={i + 1}>
