@@ -22,10 +22,10 @@ export const Modal = ({ isOpen, onClose, childComponent }: ModalProps) => {
                         transition
                         className="relative transform rounded-lg bg-white dark:bg-neutral-800 text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 dark:text-neutral-200"
                     >
-                        <div className='absolute top-0 right-0 pt-3 pe-4 cursor-pointer'
+                        <div className='absolute top-0 right-0 pt-3 pe-4 cursor-pointer text-gray-700 dark:text-neutral-200'
                             onClick={onClose}
                         >
-                            <FontAwesomeIcon icon="xmark" />
+                            <FontAwesomeIcon icon="xmark" className="text-current" />
                         </div>
                         <div className="bg-white dark:bg-neutral-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                             <div className="sm:flex sm:items-start">

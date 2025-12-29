@@ -26,7 +26,7 @@ export const Sidebar = () => {
         {
             label: 'Workout',
             path: '/workout',
-            icon: <FontAwesomeIcon icon="dumbbell" className="size-4" />,
+            icon: <FontAwesomeIcon icon="dumbbell" className="size-4 text-current" />,
         },
         {
             label: 'Calendar',
