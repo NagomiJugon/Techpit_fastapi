@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from api.routers import exercise, exercise_record, category, routine
 from fastapi.middleware.cors import CORSMiddleware
+from api.db import init_db
 
 
 app = FastAPI()
@@ -17,3 +18,8 @@ app.include_router(exercise.router)
 app.include_router(exercise_record.router)
 app.include_router(category.router)
 app.include_router(routine.router)
+
+
+@app.on_event("startup")
+async def on_startup():
+    await init_db()

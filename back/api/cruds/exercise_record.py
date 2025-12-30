@@ -1,21 +1,30 @@
-import pprint
-from sqlalchemy.ext.asyncio import AsyncSession # type: ignore
-from sqlalchemy import select # type: ignore
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlmodel import select
 from sqlalchemy.orm import joinedload
-from sqlalchemy.engine import Result # type: ignore
-from typing import Optional, List, Tuple
-import api.models.exercise_record as exercise_record_model
+from typing import List, Optional
+from api.sqlmodels import ExerciseRecord, Exercise, Category
 import api.schemas.exercise_record as exercise_record_schema
 
 
 async def create_exercise_record(
-        db: AsyncSession, exercise_record_create: exercise_record_schema.ExerciseRecordCreate
-):
-    pprint(exercise_record_create)
-# ) -> exercise_record_model.ExerciseRecord:
-    # exercise_record = exercise_record_model.ExerciseRecord(
-    #     **exercise_record_create.dict())
-    # db.add(exercise_record)
-    # await db.commit()
-    # await db.refresh(exercise_record)
-    # return exercise_record
+    db: AsyncSession, exercise_record_create: exercise_record_schema.ExerciseRecordCreate
+) -> ExerciseRecord:
+    exercise_id = exercise_record_create.exercise.id
+    rec = ExerciseRecord(
+        exercise_id=exercise_id,
+        weight=exercise_record_create.weight,
+        rep=exercise_record_create.rep,
+    )
+    db.add(rec)
+    await db.commit()
+    await db.refresh(rec)
+    # load relationship
+    result = await db.execute(select(Exercise).where(Exercise.id == rec.exercise_id))
+    rec.exercise = result.scalars().first()
+    return rec
+
+
+async def get_exercise_records(db: AsyncSession) -> List[ExerciseRecord]:
+    stmt = select(ExerciseRecord).options(joinedload(ExerciseRecord.exercise).joinedload(Exercise.category))
+    result = await db.execute(stmt)
+    return result.scalars().all()

@@ -4,6 +4,7 @@ from sqlmodel import SQLModel, Field, Relationship
 
 
 class Category(SQLModel, table=True):
+    __tablename__ = "categories"
     id: Optional[int] = Field(default=None, primary_key=True)
     name: str
 
@@ -11,6 +12,7 @@ class Category(SQLModel, table=True):
 
 
 class Exercise(SQLModel, table=True):
+    __tablename__ = "exercises"
     id: Optional[int] = Field(default=None, primary_key=True)
     name: str
     category_id: Optional[int] = Field(default=None, foreign_key="categories.id")
@@ -20,6 +22,7 @@ class Exercise(SQLModel, table=True):
 
 
 class ExerciseRecord(SQLModel, table=True):
+    __tablename__ = "exercise_records"
     id: Optional[int] = Field(default=None, primary_key=True)
     exercise_id: Optional[int] = Field(default=None, foreign_key="exercises.id")
     weight: Optional[int]
