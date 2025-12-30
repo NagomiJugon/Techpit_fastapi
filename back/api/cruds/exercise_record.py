@@ -18,9 +18,12 @@ async def create_exercise_record(
     db.add(rec)
     await db.commit()
     await db.refresh(rec)
-    # load relationship
-    result = await db.execute(select(Exercise).where(Exercise.id == rec.exercise_id))
-    rec.exercise = result.scalars().first()
+    # load relationship with nested category
+    stmt = select(ExerciseRecord).where(ExerciseRecord.id == rec.id).options(
+        joinedload(ExerciseRecord.exercise).joinedload(Exercise.category)
+    )
+    result = await db.execute(stmt)
+    rec = result.scalars().first()
     return rec
 
 
