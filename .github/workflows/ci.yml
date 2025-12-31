@@ -31,7 +31,8 @@ jobs:
 
       - name: Build and start docker-compose
         run: |
-          docker compose up -d --build
+          # Use CI override to avoid mounting host volumes that overwrite built image
+          docker compose -f docker-compose.yaml -f docker-compose.ci.yml up -d --build
 
       - name: Show compose status
         run: |
