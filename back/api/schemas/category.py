@@ -1,17 +1,15 @@
 from typing import Optional
-from pydantic import BaseModel, Field
+from sqlmodel import SQLModel, Field
 
 
-class CategoryBase(BaseModel):
+class CategoryBase(SQLModel):
     name: str = Field(..., description="カテゴリー名", max_length=64)
 
 
-# CategoryCreateResponseと同じだが、使用用途が違うので別クラスとして用意しておく
 class Category(CategoryBase):
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
 
 
 class CategoryCreate(CategoryBase):
@@ -21,5 +19,4 @@ class CategoryCreate(CategoryBase):
 class CategoryCreateResponse(CategoryCreate):
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}

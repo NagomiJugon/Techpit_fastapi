@@ -1,28 +1,25 @@
 from typing import Optional
+from datetime import date
+from sqlmodel import SQLModel, Field
 from .category import Category
-from pydantic import BaseModel, Field
 
 
-class ExerciseBase(BaseModel):
+class ExerciseBase(SQLModel):
     name: str = Field(..., description="種目名", max_length=64)
     category: Category
 
 
-# CategoryCreateResponseと同じだが、使用用途が違うので別クラスとして用意しておく
 class Exercise(ExerciseBase):
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
 
 
 class ExerciseCreate(ExerciseBase):
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
 
 
 class ExerciseCreateResponse(ExerciseBase):
     id: int
 
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
