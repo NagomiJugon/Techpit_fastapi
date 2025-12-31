@@ -39,19 +39,21 @@ jobs:
 
       - name: Wait for app
         run: |
-          for i in {1..60}; do
-            if curl -sSf http://localhost:8000/health || true; then
+          for i in {1..120}; do
+            if curl -sSf http://localhost:8000/health >/dev/null 2>&1; then
               echo "app available"
-              break
+              exit 0
             fi
             echo "waiting for app... ($i)"
             sleep 1
           done
+          echo "Timed out waiting for app" && docker compose ps || true
+          exit 1
 
-      - name: Run E2E tests (inside demo-app container)
+      - name: Run E2E tests
         run: |
-          # Run tests inside the app container to use same environment as local run
-          docker compose exec -T demo-app poetry run pytest -q back/tests/test_e2e.py
+          # Run tests from the runner (host) to avoid exec/OOM in runner
+          pytest -q back/tests/test_e2e.py
 
       - name: Dump compose logs (for debugging)
         if: failure()
