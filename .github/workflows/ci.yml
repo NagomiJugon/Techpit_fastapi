@@ -47,6 +47,17 @@ jobs:
           docker compose logs --no-color demo-app >> ./logs/demo-app.log || true
         continue-on-error: true
 
+      - name: Container internal diagnostics
+        run: |
+          mkdir -p ./logs/diag
+          echo "=== demo-app: ps aux ===" > ./logs/diag/demo-app-ps.txt || true
+          docker compose exec -T demo-app sh -c "ps aux" >> ./logs/diag/demo-app-ps.txt || echo "exec ps failed" >> ./logs/diag/demo-app-ps.txt
+          echo "=== demo-app: netstat/ss ===" > ./logs/diag/demo-app-net.txt || true
+          docker compose exec -T demo-app sh -c "(ss -tlnp || netstat -tlnp) 2>&1" >> ./logs/diag/demo-app-net.txt || echo "netstat/ss failed" >> ./logs/diag/demo-app-net.txt
+          echo "=== demo-app: curl localhost:8000/health ===" > ./logs/diag/demo-app-curl.txt || true
+          docker compose exec -T demo-app sh -c "curl -vS --max-time 5 http://127.0.0.1:8000/health" >> ./logs/diag/demo-app-curl.txt 2>&1 || echo "curl failed or no response" >> ./logs/diag/demo-app-curl.txt
+        continue-on-error: true
+
       - name: Wait for app
         run: |
           for i in {1..20}; do
