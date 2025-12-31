@@ -13,7 +13,7 @@ class ExerciseRecord(ExerciseRecordBase):
     exercise_date: date = Field(default_factory=date.today)
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class ExerciseRecordCreate(ExerciseRecordBase):
     pass
@@ -23,5 +23,5 @@ class ExerciseRecordCreateResponse(ExerciseRecordCreate):
     exercise_date: date = Field(default_factory=date.today)
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 

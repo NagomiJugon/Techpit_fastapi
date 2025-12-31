@@ -13,16 +13,16 @@ class Exercise(ExerciseBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class ExerciseCreate(ExerciseBase):
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class ExerciseCreateResponse(ExerciseBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
