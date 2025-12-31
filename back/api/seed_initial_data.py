@@ -1,5 +1,6 @@
 from sqlmodel import SQLModel, create_engine, Session, select
-from api.sqlmodels import Category, Exercise
+from api.models.category import Category
+from api.models.exercise import Exercise
 
 DB_URL = "mysql+pymysql://root@db:3306/demo?charset=utf8"
 

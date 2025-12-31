@@ -1,18 +1,14 @@
-from sqlalchemy import Column, Integer, String, Date, ForeignKey
-from sqlalchemy.orm import relationship
+from typing import Optional
 from datetime import date
-from api.models.exercise import Exercise
-
-from api.db import Base
+from sqlmodel import SQLModel, Field, Relationship
 
 
-class ExerciseRecord(Base):
-    __tablename__ = 'exercise_records'
+class ExerciseRecord(SQLModel, table=True):
+    __tablename__ = "exercise_records"
+    id: Optional[int] = Field(default=None, primary_key=True)
+    exercise_id: Optional[int] = Field(default=None, foreign_key="exercises.id")
+    weight: Optional[int]
+    rep: Optional[int]
+    exercise_date: date = Field(default_factory=date.today)
 
-    id = Column(Integer, primary_key=True)
-    exercise_id = Column(Integer, ForeignKey('exercises.id'))
-    weight = Column(Integer)
-    rep = Column(Integer)
-    exercise_date = Column(Date, default=date.today)
-
-    exercise = relationship("Exercise", backref="exercises")
+    exercise: Optional["Exercise"] = Relationship(back_populates="records")

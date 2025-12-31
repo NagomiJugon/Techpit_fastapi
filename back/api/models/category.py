@@ -1,9 +1,10 @@
-from sqlalchemy import Column, Integer, String
-from api.db import Base
+from typing import Optional, List
+from sqlmodel import SQLModel, Field, Relationship
 
 
-class Category(Base):
-    __tablename__ = 'categories'
+class Category(SQLModel, table=True):
+    __tablename__ = "categories"
+    id: Optional[int] = Field(default=None, primary_key=True)
+    name: str
 
-    id = Column(Integer, primary_key=True)
-    name = Column(String(64))
+    exercises: List["Exercise"] = Relationship(back_populates="category")

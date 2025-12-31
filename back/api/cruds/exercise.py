@@ -2,7 +2,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
 from sqlalchemy.orm import joinedload
 from typing import Optional, List
-from api.sqlmodels import Exercise, Category
+from api.models.exercise import Exercise
+from api.models.category import Category
 import api.schemas.exercise as exercise_schema
 import api.cruds.category as category_crud
 

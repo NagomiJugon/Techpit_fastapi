@@ -1,7 +1,8 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
 from typing import Optional, List
-from api.sqlmodels import Category, Exercise
+from api.models.category import Category
+from api.models.exercise import Exercise
 import api.schemas.category as category_schema
 
 

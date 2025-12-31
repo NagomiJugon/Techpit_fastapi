@@ -1,14 +1,12 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
-from sqlalchemy.orm import relationship
-from api.models.category import Category
-
-from api.db import Base
+from typing import Optional, List
+from sqlmodel import SQLModel, Field, Relationship
 
 
-class Exercise(Base):
-    __tablename__ = 'exercises'
+class Exercise(SQLModel, table=True):
+    __tablename__ = "exercises"
+    id: Optional[int] = Field(default=None, primary_key=True)
+    name: str
+    category_id: Optional[int] = Field(default=None, foreign_key="categories.id")
 
-    id = Column(Integer, primary_key=True)
-    name = Column(String(64))
-    category_id = Column(Integer, ForeignKey('categories.id'))
-    category = relationship("Category", backref="exercises")
+    category: Optional["Category"] = Relationship(back_populates="exercises")
+    records: List["ExerciseRecord"] = Relationship(back_populates="exercise")
