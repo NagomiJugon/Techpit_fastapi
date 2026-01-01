@@ -5,7 +5,9 @@ from typing import List
 import api.schemas.exercise_record as exercise_record_schema
 import api.cruds.exercise_record as exercise_record_crud
 from api.db import get_db
+import logging
 
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
@@ -18,11 +20,13 @@ async def list_exercise_records(db: AsyncSession = Depends(get_db)):
 async def create_exercise_record(
     exercise_record_body: exercise_record_schema.ExerciseRecordCreate, db: AsyncSession = Depends(get_db)
 ):
+    logger.info(f"Received exercise_record_body: {exercise_record_body}")
     try:
         rec = await exercise_record_crud.create_exercise_record(db, exercise_record_body)
         return rec
     except IntegrityError as e:
         await db.rollback()
+        logger.error(f"IntegrityError: {str(e)}")
         raise HTTPException(status_code=400, detail="Invalid exercise_id or data constraint violation")
 
 

@@ -14,7 +14,14 @@ export const Workout = () => {
     const [components, setComponents] = useState<JSX.Element[]>([]);
 
     const handleDataSubmit = async (recordData: ExerciseRecord) => {
-        await axios.post(`${API_URL}/exercise_records`, recordData)
+        // バックエンドAPIが期待する形式に変換
+        const apiData = {
+            exercise_id: recordData.exercise.id,
+            weight: recordData.weight,
+            rep: recordData.rep
+        };
+        
+        await axios.post(`${API_URL}/exercise_records`, apiData)
             .then((response) => {
                 setComponents((prevComponents) => [
                     ...prevComponents,
