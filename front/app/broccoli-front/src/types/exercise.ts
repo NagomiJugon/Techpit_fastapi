@@ -2,6 +2,7 @@ import { Category } from "@src/types/category"
 
 interface ExerciseBase {
     name: string | '',
+    category_id?: number,
     category?: Category
 }
 

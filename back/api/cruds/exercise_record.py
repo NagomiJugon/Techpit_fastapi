@@ -19,7 +19,14 @@ async def create_exercise_record(
     db.add(rec)
     await db.commit()
     await db.refresh(rec)
-    return rec
+    
+    # 関連データをロードして返す
+    stmt = select(ExerciseRecord).where(ExerciseRecord.id == rec.id).options(
+        joinedload(ExerciseRecord.exercise).joinedload(Exercise.category)
+    )
+    result = await db.execute(stmt)
+    rec_with_relations = result.scalars().first()
+    return rec_with_relations
 
 
 async def get_exercise_records(db: AsyncSession) -> List[ExerciseRecord]:
