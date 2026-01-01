@@ -1,29 +1,27 @@
 from typing import Optional
 from datetime import date
 from sqlmodel import SQLModel, Field
-from .exercise import Exercise
+from .exercise import ExerciseResponse
 
 
 class ExerciseRecordBase(SQLModel):
-    exercise: Exercise
-    weight: int
-    rep: int
-
-
-class ExerciseRecord(ExerciseRecordBase):
-    id: int
-    exercise_date: date = Field(default_factory=date.today)
-
-    model_config = {"from_attributes": True}
+    weight: int = Field(..., description="重量(kg)")
+    rep: int = Field(..., description="回数")
 
 
 class ExerciseRecordCreate(ExerciseRecordBase):
-    pass
+    exercise_id: int = Field(..., description="種目ID")
 
 
-class ExerciseRecordCreateResponse(ExerciseRecordCreate):
+class ExerciseRecordResponse(ExerciseRecordBase):
     id: int
+    exercise_id: int
     exercise_date: date = Field(default_factory=date.today)
 
     model_config = {"from_attributes": True}
+
+
+# 後方互換性のためのエイリアス
+ExerciseRecord = ExerciseRecordResponse
+ExerciseRecordCreateResponse = ExerciseRecordResponse
 

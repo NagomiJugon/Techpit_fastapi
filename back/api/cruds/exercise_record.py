@@ -11,21 +11,14 @@ import api.schemas.exercise_record as exercise_record_schema
 async def create_exercise_record(
     db: AsyncSession, exercise_record_create: exercise_record_schema.ExerciseRecordCreate
 ) -> ExerciseRecord:
-    exercise_id = exercise_record_create.exercise.id
     rec = ExerciseRecord(
-        exercise_id=exercise_id,
+        exercise_id=exercise_record_create.exercise_id,
         weight=exercise_record_create.weight,
         rep=exercise_record_create.rep,
     )
     db.add(rec)
     await db.commit()
     await db.refresh(rec)
-    # load relationship with nested category
-    stmt = select(ExerciseRecord).where(ExerciseRecord.id == rec.id).options(
-        joinedload(ExerciseRecord.exercise).joinedload(Exercise.category)
-    )
-    result = await db.execute(stmt)
-    rec = result.scalars().first()
     return rec
 
 
