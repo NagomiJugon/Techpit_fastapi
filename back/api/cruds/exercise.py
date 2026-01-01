@@ -5,19 +5,15 @@ from typing import Optional, List
 from api.models.exercise import Exercise
 from api.models.category import Category
 import api.schemas.exercise as exercise_schema
-import api.cruds.category as category_crud
 
 
 async def create_exercise(
     db: AsyncSession, exercise_create: exercise_schema.ExerciseCreate
 ) -> Exercise:
-    category_id = exercise_create.category.id
-    exercise = Exercise(name=exercise_create.name, category_id=category_id)
+    exercise = Exercise(name=exercise_create.name, category_id=exercise_create.category_id)
     db.add(exercise)
     await db.commit()
     await db.refresh(exercise)
-    category = await category_crud.get_category(db, category_id=category_id)
-    exercise.category = category
     return exercise
 
 
@@ -44,6 +40,7 @@ async def update_exercise(
     db: AsyncSession, exercise_create: exercise_schema.ExerciseCreate, original: Exercise
 ) -> Exercise:
     original.name = exercise_create.name
+    original.category_id = exercise_create.category_id
     db.add(original)
     await db.commit()
     await db.refresh(original)

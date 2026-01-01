@@ -2,16 +2,22 @@ from fastapi import FastAPI
 from api.routers import exercise, exercise_record, category, routine, health
 from fastapi.middleware.cors import CORSMiddleware
 from api.db import init_db
+from api.core.config import settings
+from api.core.exceptions import register_exception_handlers
 
 
 app = FastAPI()
 
+# 例外ハンドラーを登録
+register_exception_handlers(app)
+
+# CORS設定を環境変数から読み込み
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # すべてのオリジンを許可（開発環境ではこれでも問題ない）
-    allow_credentials=True,
-    allow_methods=["*"],  # 全てのHTTPメソッドを許可
-    allow_headers=["*"],  # 全てのヘッダーを許可
+    allow_origins=settings.CORS_ORIGINS,
+    allow_credentials=settings.CORS_ALLOW_CREDENTIALS,
+    allow_methods=settings.CORS_ALLOW_METHODS,
+    allow_headers=settings.CORS_ALLOW_HEADERS,
 )
 
 app.include_router(exercise.router)

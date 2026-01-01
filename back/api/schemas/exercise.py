@@ -6,20 +6,21 @@ from .category import Category
 
 class ExerciseBase(SQLModel):
     name: str = Field(..., description="種目名", max_length=64)
-    category: Category
-
-
-class Exercise(ExerciseBase):
-    id: int
-
-    model_config = {"from_attributes": True}
 
 
 class ExerciseCreate(ExerciseBase):
+    category_id: int = Field(..., description="カテゴリーID")
+
     model_config = {"from_attributes": True}
 
 
-class ExerciseCreateResponse(ExerciseBase):
+class ExerciseResponse(ExerciseBase):
     id: int
+    category_id: int
 
     model_config = {"from_attributes": True}
+
+
+# 後方互換性のためのエイリアス
+Exercise = ExerciseResponse
+ExerciseCreateResponse = ExerciseResponse

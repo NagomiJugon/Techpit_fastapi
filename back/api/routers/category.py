@@ -4,6 +4,7 @@ from typing import List, Optional
 import api.schemas.category as category_schema
 import api.cruds.category as category_crud
 from api.db import get_db
+from api.core.helpers import check_resource_exists
 
 router = APIRouter()
 
@@ -34,17 +35,11 @@ async def create_category(
 async def update_category(
     category_id: int, category_body: category_schema.CategoryCreate, db: AsyncSession = Depends(get_db)
 ):
-    category = await category_crud.get_category(db, category_id=category_id)
-    if category is None:
-        raise HTTPException(status_code=404, detail="Category not found")
-
+    category = await check_resource_exists(db, category_crud.get_category, category_id, "Category")
     return await category_crud.update_category(db, category_body, original=category)
 
 
 @router.delete("/categories/{category_id}", response_model=None)
 async def delete_category(category_id: int, db: AsyncSession = Depends(get_db)):
-    category = await category_crud.get_category(db, category_id=category_id)
-    if category is None:
-        raise HTTPException(status_code=404, detail="Category not found")
-
+    category = await check_resource_exists(db, category_crud.get_category, category_id, "Category")
     return await category_crud.delete_category(db, original=category)
