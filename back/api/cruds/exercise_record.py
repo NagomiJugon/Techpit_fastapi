@@ -2,6 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
 from sqlalchemy.orm import joinedload
 from typing import List, Optional
+from datetime import date
 from api.models.exercise_record import ExerciseRecord
 from api.models.exercise import Exercise
 from api.models.category import Category
@@ -30,6 +31,10 @@ async def create_exercise_record(
 
 
 async def get_exercise_records(db: AsyncSession) -> List[ExerciseRecord]:
-    stmt = select(ExerciseRecord).options(joinedload(ExerciseRecord.exercise).joinedload(Exercise.category))
+    # 本日分のみを取得する
+    today = date.today()
+    stmt = select(ExerciseRecord).where(ExerciseRecord.exercise_date == today).options(
+        joinedload(ExerciseRecord.exercise).joinedload(Exercise.category)
+    )
     result = await db.execute(stmt)
     return result.scalars().all()
