@@ -1,25 +1,25 @@
 # Techpit_fastapi
 
-## Local CI / E2E test
+## ローカル CI / E2E テスト
 
-To run the simple end-to-end tests locally (the repo uses docker-compose):
+このリポジトリは `docker-compose` を使用しています。ローカルで簡単なエンドツーエンドテストを実行する手順:
 
-1. Build and start services:
+1. サービスをビルドして起動します:
 
 ```bash
 docker compose up -d --build
 ```
 
-2. Wait until the backend is available and the DB is ready, then run the pytest E2E file:
+2. バックエンドとデータベースが利用可能になるまで待ち、pytest の E2E テストを実行します:
 
 ```bash
 pytest -q back/tests/test_e2e.py
 ```
 
-3. When finished, tear down:
+3. テスト実行後、クリーンアップします:
 
 ```bash
 docker compose down -v --remove-orphans
 ```
 
-Note: The CI workflow `.github/workflows/ci.yml` will run similar steps on push/PR.
+注意: CI ワークフロー (`.github/workflows/ci.yml`) は push/PR 時に同様の手順を実行します。
