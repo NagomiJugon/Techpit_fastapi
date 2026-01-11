@@ -40,6 +40,17 @@ services:
       - 33306:3306  # ホストマシンのポート33306を、docker内のポート3306に接続する
     networks:
       - app_network
+  phpmyadmin:
+    image: phpmyadmin:latest
+    restart: always
+    ports:
+      - 8080:80
+    depends_on:
+      - db
+    environment:
+      PMA_HOST: db
+    networks:
+      - app_network
 volumes:
   mysql_data:
 networks:
