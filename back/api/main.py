@@ -6,7 +6,12 @@ from api.core.config import settings
 from api.core.exceptions import register_exception_handlers
 
 
-app = FastAPI()
+app = FastAPI(
+    title="Broccoli API",
+    description="フィットネス管理アプリケーション API",
+    version="0.1.0",
+    openapi_url="/openapi.json",
+)
 
 # 例外ハンドラーを登録
 register_exception_handlers(app)
