@@ -21,3 +21,6 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+# Auto-generated API types from OpenAPI schema
+# Do not commit - regenerate with: npm run generate:types
+src/api/generated.ts
