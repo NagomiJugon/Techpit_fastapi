@@ -30,10 +30,12 @@ async def create_exercise_record(
     return rec_with_relations
 
 
-async def get_exercise_records(db: AsyncSession) -> List[ExerciseRecord]:
-    # 本日分のみを取得する
-    today = date.today()
-    stmt = select(ExerciseRecord).where(ExerciseRecord.exercise_date == today).options(
+async def get_exercise_records(db: AsyncSession, target_date: Optional[date] = None) -> List[ExerciseRecord]:
+    """指定された日付のレコードを返す。`target_date` が None の場合は本日分を返す。"""
+    if target_date is None:
+        target_date = date.today()
+
+    stmt = select(ExerciseRecord).where(ExerciseRecord.exercise_date == target_date).options(
         joinedload(ExerciseRecord.exercise).joinedload(Exercise.category)
     )
     result = await db.execute(stmt)

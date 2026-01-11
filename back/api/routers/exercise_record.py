@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
-from typing import List
+from typing import List, Optional
+from datetime import date
 import api.schemas.exercise_record as exercise_record_schema
 import api.cruds.exercise_record as exercise_record_crud
 from api.db import get_db
@@ -12,8 +13,11 @@ router = APIRouter()
 
 
 @router.get("/exercise_records", response_model=List[exercise_record_schema.ExerciseRecord])
-async def list_exercise_records(db: AsyncSession = Depends(get_db)):
-    return await exercise_record_crud.get_exercise_records(db)
+async def list_exercise_records(
+    date: Optional[date] = Query(None, description="Filter records by YYYY-MM-DD"),
+    db: AsyncSession = Depends(get_db),
+):
+    return await exercise_record_crud.get_exercise_records(db, date)
 
 
 @router.post("/exercise_records", response_model=exercise_record_schema.ExerciseRecordCreateResponse)
