@@ -40,3 +40,53 @@ async def get_exercise_records(db: AsyncSession, target_date: Optional[date] = N
     )
     result = await db.execute(stmt)
     return result.scalars().all()
+
+
+async def get_exercise_record_by_id(db: AsyncSession, record_id: int) -> Optional[ExerciseRecord]:
+    """指定されたIDのエクササイズレコードを取得"""
+    stmt = select(ExerciseRecord).where(ExerciseRecord.id == record_id).options(
+        joinedload(ExerciseRecord.exercise).joinedload(Exercise.category)
+    )
+    result = await db.execute(stmt)
+    return result.scalars().first()
+
+
+async def update_exercise_record(
+    db: AsyncSession, record_id: int, exercise_record_update: exercise_record_schema.ExerciseRecordCreate
+) -> Optional[ExerciseRecord]:
+    """エクササイズレコードを更新"""
+    stmt = select(ExerciseRecord).where(ExerciseRecord.id == record_id)
+    result = await db.execute(stmt)
+    rec = result.scalars().first()
+    
+    if not rec:
+        return None
+    
+    rec.exercise_id = exercise_record_update.exercise_id
+    rec.weight = exercise_record_update.weight
+    rec.rep = exercise_record_update.rep
+    
+    await db.commit()
+    await db.refresh(rec)
+    
+    # 関連データをロードして返す
+    stmt = select(ExerciseRecord).where(ExerciseRecord.id == rec.id).options(
+        joinedload(ExerciseRecord.exercise).joinedload(Exercise.category)
+    )
+    result = await db.execute(stmt)
+    rec_with_relations = result.scalars().first()
+    return rec_with_relations
+
+
+async def delete_exercise_record(db: AsyncSession, record_id: int) -> bool:
+    """エクササイズレコードを削除"""
+    stmt = select(ExerciseRecord).where(ExerciseRecord.id == record_id)
+    result = await db.execute(stmt)
+    rec = result.scalars().first()
+    
+    if not rec:
+        return False
+    
+    await db.delete(rec)
+    await db.commit()
+    return True

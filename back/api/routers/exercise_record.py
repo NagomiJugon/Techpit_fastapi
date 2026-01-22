@@ -34,6 +34,49 @@ async def create_exercise_record(
         raise HTTPException(status_code=400, detail="Invalid exercise_id or data constraint violation")
 
 
+@router.get("/exercise_records/{record_id}", response_model=exercise_record_schema.ExerciseRecord)
+async def get_exercise_record(
+    record_id: int, db: AsyncSession = Depends(get_db)
+):
+    logger.info(f"Fetching exercise_record {record_id}")
+    rec = await exercise_record_crud.get_exercise_record_by_id(db, record_id)
+    if not rec:
+        raise HTTPException(status_code=404, detail="Exercise record not found")
+    return rec
+
+
+@router.put("/exercise_records/{record_id}", response_model=exercise_record_schema.ExerciseRecord)
+async def update_exercise_record(
+    record_id: int, exercise_record_body: exercise_record_schema.ExerciseRecordCreate, db: AsyncSession = Depends(get_db)
+):
+    logger.info(f"Updating exercise_record {record_id}: {exercise_record_body}")
+    try:
+        rec = await exercise_record_crud.update_exercise_record(db, record_id, exercise_record_body)
+        if not rec:
+            raise HTTPException(status_code=404, detail="Exercise record not found")
+        return rec
+    except IntegrityError as e:
+        await db.rollback()
+        logger.error(f"IntegrityError: {str(e)}")
+        raise HTTPException(status_code=400, detail="Invalid exercise_id or data constraint violation")
+
+
+@router.delete("/exercise_records/{record_id}")
+async def delete_exercise_record(
+    record_id: int, db: AsyncSession = Depends(get_db)
+):
+    logger.info(f"Deleting exercise_record {record_id}")
+    try:
+        success = await exercise_record_crud.delete_exercise_record(db, record_id)
+        if not success:
+            raise HTTPException(status_code=404, detail="Exercise record not found")
+        return {"message": "Exercise record deleted successfully"}
+    except Exception as e:
+        await db.rollback()
+        logger.error(f"Error: {str(e)}")
+        raise HTTPException(status_code=400, detail="Failed to delete exercise record")
+
+
 # @router.put("exercises/{exercise_id}", response_model=exercise_schema.Exercise)
 # async def update_exercise(exercise_id: int, exercise_body: exercise_schema.ExerciseCreate):
 #     return exercise_schema.Exercise(id=exercise_id, **exercise_body.dict())

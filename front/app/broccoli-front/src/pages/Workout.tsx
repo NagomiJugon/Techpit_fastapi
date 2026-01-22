@@ -13,6 +13,19 @@ import { Tr } from '@src/components/Content/Table/Tr';
 export const Workout = () => {
     const [records, setRecords] = useState<ExerciseRecord[]>([]);
 
+    const fetchRecords = async () => {
+        try {
+            const response = await axios.get<ExerciseRecord[]>(`${API_URL}/exercise_records`);
+            setRecords(response.data);
+        } catch (error) {
+            console.error('Failed to fetch records:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchRecords();
+    }, []);
+
     const handleDataSubmit = async (recordData: ExerciseRecord) => {
         // バックエンドAPIが期待する形式に変換
         const apiData = {
@@ -42,7 +55,7 @@ export const Workout = () => {
                             <Header />
                             <Body>
                                 {records.map((r) => (
-                                    <Tr key={r.id} record={r} />
+                                    <Tr key={r.id} record={r} onRefresh={fetchRecords} />
                                 ))}
                             </Body>
                         </Table>

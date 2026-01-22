@@ -62,13 +62,38 @@ export const ExerciseRecordForm = ({ onDataSubmit, onDataDelete, recordId }: Fun
                         }
                     }));
                 }
-                console.log(inputData);
             })
             .catch(() => {
                 exerciseDispatch({ type: ActionTypes.error });
             });
-        await console.log(exercisesState);
     };
+
+    // recordId が渡された場合、登録データを取得して表示
+    useEffect(() => {
+        const fetchRecordData = async () => {
+            if (recordId) {
+                try {
+                    const response = await axios.get(`${API_URL}/exercise_records/${recordId}`);
+                    const recordData = response.data;
+                    setInputData({
+                        id: recordData.id,
+                        exercise: recordData.exercise,
+                        weight: recordData.weight,
+                        rep: recordData.rep,
+                        exercise_date: recordData.exercise_date
+                    });
+                    setCategoryState({
+                        id: recordData.exercise?.category?.id,
+                        name: recordData.exercise?.category?.name
+                    });
+                } catch (error) {
+                    console.error('Failed to fetch record data:', error);
+                }
+            }
+        };
+        
+        fetchRecordData();
+    }, [recordId]);
 
     useEffect(() => {
         fetchCategories();
@@ -87,14 +112,13 @@ export const ExerciseRecordForm = ({ onDataSubmit, onDataDelete, recordId }: Fun
             ...prevData,
             [name]: value,
         }));
-        console.log(inputData);
     };
 
     const handleCategoryChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const dataset = event.target.selectedOptions[0].dataset;
         const categoryId = dataset.categoryId;
         const categoryName = dataset.categoryName;
-        console.log(dataset);
+
         setCategoryState((prevData: any) => ({
             ...prevData,
             id: categoryId,
@@ -104,7 +128,6 @@ export const ExerciseRecordForm = ({ onDataSubmit, onDataDelete, recordId }: Fun
             ...prevData,
             id: categoryId
         }));
-        console.log(inputData);
     }
 
     const handleExerciseChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -126,11 +149,18 @@ export const ExerciseRecordForm = ({ onDataSubmit, onDataDelete, recordId }: Fun
                 }
             }
         }));
-        console.log(inputData);
     }
 
     const handleSubmit = () => {
         onDataSubmit(inputData);
+    };
+
+    const handleDelete = () => {
+        if (confirm('このレコードを削除してもよろしいですか?')) {
+            if (onDataDelete) {
+                onDataDelete();
+            }
+        }
     };
 
     return (
@@ -142,7 +172,7 @@ export const ExerciseRecordForm = ({ onDataSubmit, onDataDelete, recordId }: Fun
                 <select className="block appearance-none w-full bg-white dark:bg-neutral-700 border border-gray-400 dark:border-neutral-600 hover:border-gray-500 dark:hover:border-neutral-500 ps-2 pe-8 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline text-gray-800 dark:text-neutral-200" id='category_id'
                     name="category_id"
                     onChange={handleCategoryChange}>
-                    <option key={'category_0'} value={0} data-category-id={0} data-category-name>No Category</option>
+                    <option key={'category_0'} value={0} data-category-id={0} data-category-name>All Categories</option>
                     {categoriesState.categories.map(category => (
                         <option key={`category_${category.id}`} value={category.id}
                             data-category-id={category.id}
@@ -198,7 +228,7 @@ export const ExerciseRecordForm = ({ onDataSubmit, onDataDelete, recordId }: Fun
                 </button>
                 {onDataDelete &&
                     <button className="bg-orange-500 opacity-75 hover:opacity-100 transition text-white font-bold py-2 px-4 mx-2 rounded focus:outline-none focus:shadow-outline" type="button"
-                        onClick={handleSubmit}>
+                        onClick={handleDelete}>
                         Delete
                     </button>
                 }

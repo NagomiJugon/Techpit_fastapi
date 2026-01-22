@@ -7,17 +7,57 @@ import { API_URL } from '@src/utils/constants';
 
 type RecordProps<T> = {
     record: T;
+    onRefresh?: () => void;
 };
 
 const isExerciseRecord = (props: any): props is ExerciseRecord => {
     return (props as ExerciseRecord)?.type === 'exercise_record';
 }
 
-export const Tr = <T extends ExerciseRecord>({ record }: RecordProps<T>) => {
+export const Tr = <T extends ExerciseRecord>({ record, onRefresh }: RecordProps<T>) => {
     const [open, setOpen] = useState(false);
     const [exerciseRecordId, setExerciseRecordId] = useState<number>();
 
     const handleDataSubmit = async (recordData: ExerciseRecord) => {
+        try {
+            const payload = {
+                exercise_id: recordData.exercise?.id,
+                weight: recordData.weight,
+                rep: recordData.rep
+            };
+
+            if (recordData.id) {
+                // Update existing record
+                await axios.put(`${API_URL}/exercise_records/${recordData.id}`, payload);
+            } else {
+                // Create new record
+                await axios.post(`${API_URL}/exercise_records`, payload);
+            }
+            setOpen(false);
+            // Refresh table data
+            if (onRefresh) {
+                onRefresh();
+            }
+        } catch (error) {
+            console.error('Failed to submit record:', error);
+            alert('データの保存に失敗しました');
+        }
+    };
+
+    const handleDataDelete = async () => {
+        try {
+            if (record.id) {
+                await axios.delete(`${API_URL}/exercise_records/${record.id}`);
+                setOpen(false);
+                // Refresh table data
+                if (onRefresh) {
+                    onRefresh();
+                }
+            }
+        } catch (error) {
+            console.error('Failed to delete record:', error);
+            alert('データの削除に失敗しました');
+        }
     };
 
 
@@ -77,7 +117,7 @@ export const Tr = <T extends ExerciseRecord>({ record }: RecordProps<T>) => {
                     childComponent={
                         <ExerciseRecordForm 
                             onDataSubmit={handleDataSubmit} 
-                            onDataDelete={() => {}}
+                            onDataDelete={handleDataDelete}
                             recordId={record.id}
                         />
                     }
