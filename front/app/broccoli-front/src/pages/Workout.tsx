@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { MainLayout } from '@src/layouts/MainLayout/MainLayout';
 import { Content } from '@src/components/Content/Content';
 import { Table } from '@src/components/Content/Table/Table';
@@ -11,27 +11,23 @@ import { API_URL } from '@src/utils/constants';
 import { Tr } from '@src/components/Content/Table/Tr';
 
 export const Workout = () => {
-    const [components, setComponents] = useState<JSX.Element[]>([]);
+    const [records, setRecords] = useState<ExerciseRecord[]>([]);
 
     const handleDataSubmit = async (recordData: ExerciseRecord) => {
         // バックエンドAPIが期待する形式に変換
         const apiData = {
             exercise_id: recordData.exercise.id,
             weight: recordData.weight,
-            rep: recordData.rep
+            rep: recordData.rep,
         };
-        
-        await axios.post(`${API_URL}/exercise_records`, apiData)
-            .then((response) => {
-                setComponents((prevComponents) => [
-                    ...prevComponents,
-                    <Tr key={response.data.id} record={response.data} />,
-                ]);
-                console.log(response.data);
-            })
-            .catch((error) => {
-                alert(error.message);
-            });
+
+        try {
+            const response = await axios.post(`${API_URL}/exercise_records`, apiData);
+            const newRecord: ExerciseRecord = response.data;
+            setRecords((prev) => [...prev, newRecord]);
+        } catch (error: any) {
+            alert(error.message);
+        }
     };
 
     return (
@@ -45,7 +41,9 @@ export const Workout = () => {
                         <Table>
                             <Header />
                             <Body>
-                                {components}
+                                {records.map((r) => (
+                                    <Tr key={r.id} record={r} />
+                                ))}
                             </Body>
                         </Table>
                     </div>
