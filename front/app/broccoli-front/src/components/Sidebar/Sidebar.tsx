@@ -140,8 +140,22 @@ export const Sidebar = () => {
         setExpandedMenu(expandedMenu === label ? null : label);
     };
 
+    const closeSidebar = () => {
+        const sidebar = document.getElementById('hs-application-sidebar');
+        if (sidebar && window.innerWidth < 1024) { // lg breakpoint
+            sidebar.classList.add('-translate-x-full');
+        }
+    };
+
     return (
-        <div id="hs-application-sidebar" className="hs-overlay [--auto-close:lg]
+        <>
+            {/* Mobile overlay */}
+            <div 
+                className="lg:hidden fixed inset-0 bg-gray-900/50 dark:bg-gray-900/90 z-50 hidden hs-overlay-backdrop"
+                onClick={closeSidebar}
+            ></div>
+            
+            <div id="hs-application-sidebar" className="hs-overlay [--auto-close:lg]
         hs-overlay-open:translate-x-0
         -translate-x-full transition-all duration-300 transform
         w-[260px] h-full
@@ -151,7 +165,7 @@ export const Sidebar = () => {
         dark:bg-neutral-800 dark:border-neutral-700" role="dialog" aria-label="Sidebar">
             <div className="relative flex flex-col h-full">
                 {/* Logo */}
-                <div className="px-6 pt-4 pb-4 border-b border-gray-200 dark:border-neutral-700">
+                <div className="px-6 pt-4 pb-4 border-b border-gray-200 dark:border-neutral-700 flex items-center justify-between">
                     <a className="flex items-center gap-3 text-lg font-semibold focus:outline-none focus:opacity-80" href="#"
                         aria-label="Broccoli">
                         <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -168,6 +182,15 @@ export const Sidebar = () => {
                         </svg>
                         <span className="text-gray-800 dark:text-white">Broccoli</span>
                     </a>
+                    {/* Close button for mobile */}
+                    <button
+                        onClick={closeSidebar}
+                        className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-700 transition-colors"
+                        aria-label="Close menu">
+                        <svg className="w-5 h-5 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
                 </div>
 
                 {/* Navigation */}
@@ -206,7 +229,10 @@ export const Sidebar = () => {
                                                     {item.children.map((child) => (
                                                         <li key={child.path}>
                                                             <button
-                                                                onClick={() => navigate(child.path)}
+                                                                onClick={() => {
+                                                                    navigate(child.path);
+                                                                    closeSidebar();
+                                                                }}
                                                                 className={`w-full flex items-center gap-2.5 px-3 py-2 text-xs rounded-lg transition-colors focus:outline-none ${
                                                                     isActive(child.path)
                                                                         ? 'bg-blue-100 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400'
@@ -221,7 +247,10 @@ export const Sidebar = () => {
                                         </div>
                                     ) : (
                                         <button
-                                            onClick={() => navigate(item.path)}
+                                            onClick={() => {
+                                                navigate(item.path);
+                                                closeSidebar();
+                                            }}
                                             className={`w-full flex items-center gap-2.5 px-3 py-2 text-sm rounded-lg transition-colors focus:outline-none ${
                                                 isActive(item.path)
                                                     ? 'bg-blue-100 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400'

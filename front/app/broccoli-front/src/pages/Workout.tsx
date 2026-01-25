@@ -52,11 +52,11 @@ export const Workout = () => {
     return (
         <MainLayout>
             <Content>
-                <div className='flex flex-row items-start gap-4'>
-                    <div className='w-1/3 w-96'>
+                <div className='flex flex-col lg:flex-row items-start gap-4'>
+                    <div className='w-full lg:w-1/3 lg:max-w-md'>
                         <ExerciseRecordForm onDataSubmit={handleDataSubmit} />
                     </div>
-                    <div className='w-2/3'>
+                    <div className='w-full lg:w-2/3'>
                         <Table>
                             <Header />
                             <Body>

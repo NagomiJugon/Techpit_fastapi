@@ -33,12 +33,29 @@ export const Header = () => {
         setIsDark((s) => !s);
     };
 
+    const toggleSidebar = () => {
+        const sidebar = document.getElementById('hs-application-sidebar');
+        if (sidebar) {
+            sidebar.classList.toggle('-translate-x-full');
+        }
+    };
+
     return (
         <header className="sticky top-0 z-40 w-full bg-white border-b border-gray-200 dark:bg-neutral-800 dark:border-neutral-700 shadow-sm">
             <nav className="px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16 gap-4">
-                {/* Left section - Logo for mobile */}
-                <div className="flex items-center lg:hidden">
-                    <Logo />
+                {/* Left section - Menu button for mobile */}
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={toggleSidebar}
+                        className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-700 transition-colors focus:outline-none"
+                        aria-label="Toggle menu">
+                        <svg className="w-6 h-6 text-gray-700 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                    <div className="lg:hidden">
+                        <Logo />
+                    </div>
                 </div>
                 
                 {/* Center section - Title */}
