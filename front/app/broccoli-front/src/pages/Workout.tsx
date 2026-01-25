@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { MainLayout } from '@src/layouts/MainLayout/MainLayout';
 import { Content } from '@src/components/Content/Content';
-import { Table } from '@src/components/Content/Table/Table';
+import { Table } from '@src/components/Content/ExerciseRecordTable/Table';
 import { ExerciseRecordForm } from '@src/components/Content/ExerciseRecordForm';
-import { Header } from '@src/components/Content/Table/Header';
-import { Body } from '@src/components/Content/Table/Body';
+import { Header } from '@src/components/Content/ExerciseRecordTable/Header';
+import { Body } from '@src/components/Content/ExerciseRecordTable/Body';
 import type { components } from '@src/api/generated';
 import axios from 'axios';
 import { API_URL } from '@src/utils/constants';
-import { ExerciseRecordRow } from '@src/components/Content/Table/ExerciseRecordRow';
+import { Row } from '@src/components/Content/ExerciseRecordTable/Row';
 
 type ExerciseRecord = components['schemas']['ExerciseRecordResponse'];
 
@@ -61,7 +61,7 @@ export const Workout = () => {
                             <Header />
                             <Body>
                                 {records.map((r) => (
-                                    <ExerciseRecordRow key={r.id} record={r} onRefresh={fetchRecords} />
+                                    <Row key={r.id} record={r} onRefresh={fetchRecords} />
                                 ))}
                             </Body>
                         </Table>

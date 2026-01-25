@@ -16,7 +16,7 @@ const isExerciseRecord = (props: any): props is ExerciseRecord => {
     return props && typeof props === 'object' && 'exercise_id' in props && 'weight' in props && 'rep' in props;
 }
 
-export const ExerciseRecordRow = <T extends ExerciseRecord>({ record, onRefresh }: RecordProps<T>) => {
+export const Row = <T extends ExerciseRecord>({ record, onRefresh }: RecordProps<T>) => {
     const [open, setOpen] = useState(false);
     const [exerciseRecordId, setExerciseRecordId] = useState<number>();
 
