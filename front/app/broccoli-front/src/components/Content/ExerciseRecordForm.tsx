@@ -1,7 +1,7 @@
 import React, { useEffect, useReducer, useState } from 'react';
 import type { components } from '@src/api/generated';
-import { categoryReducer, initialState as CategoryReducerIS } from '@src/reducers/CategoryReducer';
-import { exerciseReducer, initialState as ExerciseReducerIS } from '@src/reducers/ExerciseReducer';
+import { categoryReducer, initialState as CategoryReducerIS } from '@src/reducers/categoryReducer';
+import { exerciseReducer, initialState as ExerciseReducerIS } from '@src/reducers/exerciseReducer';
 import { ActionTypes, API_URL } from '@src/utils/constants';
 import axios from 'axios';
 

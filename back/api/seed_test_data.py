@@ -2,7 +2,7 @@
 テストデータ生成スクリプト
 
 使用方法:
-docker compose exec demo-app python -c "from api.seed_test_records import seed_test_records; import asyncio; asyncio.run(seed_test_records())"
+docker compose exec demo-app python -c "from api.seed_test_data import seed_test_data; import asyncio; asyncio.run(seed_test_data())"
 """
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -15,7 +15,7 @@ from datetime import datetime, timedelta
 import random
 
 
-async def seed_test_records():
+async def seed_test_data():
     """200件のテストデータを生成（週4日、1日4種目）"""
     
     async with AsyncSession(async_engine) as session:

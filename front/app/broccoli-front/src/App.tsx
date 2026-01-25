@@ -5,8 +5,8 @@ import { IStaticMethods } from "preline/preline";
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Workout } from '@src/pages/Workout';
 import { Dashboard } from '@src/pages/Dashboard';
-import { CategoryManagement } from '@src/pages/Category';
-import { ExerciseManagement } from '@src/pages/Exercise';
+import { CategoryManagement } from '@src/pages/Categories';
+import { ExerciseManagement } from '@src/pages/Exercises';
 import { History } from '@src/pages/History';
 import { Calendar } from '@src/pages/Calendar';
 

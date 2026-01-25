@@ -4,7 +4,7 @@ import { Content } from '@src/components/Content/Content';
 import axios from 'axios';
 import { API_URL, ActionTypes } from '@src/utils/constants';
 import type { components } from '@src/api/generated';
-import { categoryReducer, initialState as CategoryReducerIS } from '@src/reducers/CategoryReducer';
+import { categoryReducer, initialState as CategoryReducerIS } from '@src/reducers/categoryReducer';
 
 type Exercise = components['schemas']['ExerciseResponse'];
 type Category = components['schemas']['Category'];
