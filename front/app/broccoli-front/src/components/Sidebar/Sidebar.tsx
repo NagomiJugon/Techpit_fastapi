@@ -280,5 +280,6 @@ export const Sidebar = () => {
                 </div>
             </div>
         </div>
+        </>
     );
 };
