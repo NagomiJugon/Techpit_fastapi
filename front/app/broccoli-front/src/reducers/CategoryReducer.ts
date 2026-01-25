@@ -1,5 +1,7 @@
-import { Category } from '@src/types/category';
+import type { components } from '@src/api/generated';
 import { RequestStates, ActionTypes } from '@src/utils/constants';
+
+type Category = components['schemas']['Category'];
 
 type CategoriesState = {
     categories: Category[],

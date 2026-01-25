@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { ExerciseRecord } from '@src/types/exerciseRecord';
+import type { components } from '@src/api/generated';
 import { Modal } from '@src/components/Content/Modal';
 import { ExerciseRecordForm } from '../ExerciseRecordForm';
 import axios from 'axios';
 import { API_URL } from '@src/utils/constants';
+
+type ExerciseRecord = components['schemas']['ExerciseRecordResponse'];
 
 type RecordProps<T> = {
     record: T;
@@ -11,7 +13,7 @@ type RecordProps<T> = {
 };
 
 const isExerciseRecord = (props: any): props is ExerciseRecord => {
-    return (props as ExerciseRecord)?.type === 'exercise_record';
+    return props && typeof props === 'object' && 'exercise_id' in props && 'weight' in props && 'rep' in props;
 }
 
 export const Tr = <T extends ExerciseRecord>({ record, onRefresh }: RecordProps<T>) => {

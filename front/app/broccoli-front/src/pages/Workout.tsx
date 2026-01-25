@@ -5,10 +5,12 @@ import { Table } from '@src/components/Content/Table/Table';
 import { ExerciseRecordForm } from '@src/components/Content/ExerciseRecordForm';
 import { Header } from '@src/components/Content/Table/Header';
 import { Body } from '@src/components/Content/Table/Body';
-import { ExerciseRecord } from '@src/types/exerciseRecord';
+import type { components } from '@src/api/generated';
 import axios from 'axios';
 import { API_URL } from '@src/utils/constants';
 import { Tr } from '@src/components/Content/Table/Tr';
+
+type ExerciseRecord = components['schemas']['ExerciseRecordResponse'];
 
 export const Workout = () => {
     const [records, setRecords] = useState<ExerciseRecord[]>([]);

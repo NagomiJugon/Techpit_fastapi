@@ -6,8 +6,10 @@ import { Table } from '@src/components/Content/Table/Table';
 import { ActionTypes, API_URL } from '@src/utils/constants';
 import { Body } from '@src/components/Content/Table/Body';
 import { exerciseRecordReducer, initialState } from '@src/reducers/ExerciseRecordReducer';
-import { ExerciseRecord } from '@src/types/exerciseRecord';
+import type { components } from '@src/api/generated';
 import { Tr } from '@src/components/Content/Table/Tr';
+
+type ExerciseRecord = components['schemas']['ExerciseRecordResponse'];
 
 export const Dashboard = () => {
     const [state, dispatch] = useReducer(exerciseRecordReducer, initialState);

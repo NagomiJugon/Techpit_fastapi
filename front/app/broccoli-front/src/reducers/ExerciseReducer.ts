@@ -1,5 +1,7 @@
-import { Exercise } from "@src/types/exercise";
+import type { components } from "@src/api/generated";
 import { ActionTypes, RequestStates } from "@src/utils/constants";
+
+type Exercise = components['schemas']['ExerciseResponse'];
 
 type ExercisesState = {
     exercises: Exercise[],

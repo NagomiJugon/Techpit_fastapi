@@ -1,11 +1,31 @@
 import React, { useEffect, useReducer, useState } from 'react';
-import { ExerciseRecord, initialState as ExerciseRecordIS } from '@src/types/exerciseRecord';
-import { Category } from '@src/types/category';
+import type { components } from '@src/api/generated';
 import { categoryReducer, initialState as CategoryReducerIS } from '@src/reducers/CategoryReducer';
 import { exerciseReducer, initialState as ExerciseReducerIS } from '@src/reducers/ExerciseReducer';
 import { ActionTypes, API_URL } from '@src/utils/constants';
 import axios from 'axios';
-import { Exercise } from '@src/types/exercise';
+
+type ExerciseRecord = components['schemas']['ExerciseRecordResponse'];
+type Category = components['schemas']['Category'];
+type Exercise = components['schemas']['ExerciseResponse'];
+
+// TODO: generateInitialState から初期値を取得するように更新
+const ExerciseRecordIS: ExerciseRecord = {
+    id: 1,
+    weight: 30,
+    rep: 10,
+    exercise_id: 1,
+    exercise: {
+        id: 0,
+        name: "",
+        category_id: 0,
+        category: {
+            id: 0,
+            name: "",
+        },
+    },
+    exercise_date: "2025-01-25",
+};
 
 interface FunctionProps {
     onDataSubmit: (inputData: ExerciseRecord) => void;
@@ -48,16 +68,18 @@ export const ExerciseRecordForm = ({ onDataSubmit, onDataDelete, recordId }: Fun
                 exerciseDispatch({ type: ActionTypes.success, payload: response.data });
                 console.log(exercisesState.exercises[0]);
                 if (response.data.length > 0) {
+                    const firstExercise = response.data[0];
+                    const categoryForExercise = categoriesState.categories.find(c => c.id === firstExercise.category_id);
                     setInputData((prevData: any) => ({
                         ...prevData,
+                        exercise_id: firstExercise.id,
                         exercise: {
-                            ...prevData.exercise,
-                            id: response.data[0].id,
-                            name: response.data[0].name,
-                            category: {
-                                ...prevData.exercise.category,
-                                id: response.data[0]?.category?.id,
-                                name: response.data[0]?.category?.name
+                            id: firstExercise.id,
+                            name: firstExercise.name,
+                            category_id: firstExercise.category_id,
+                            category: categoryForExercise || {
+                                id: 0,
+                                name: ''
                             }
                         }
                     }));
@@ -74,17 +96,18 @@ export const ExerciseRecordForm = ({ onDataSubmit, onDataDelete, recordId }: Fun
             if (recordId) {
                 try {
                     const response = await axios.get(`${API_URL}/exercise_records/${recordId}`);
-                    const recordData = response.data;
+                    const recordData: ExerciseRecord = response.data;
                     setInputData({
                         id: recordData.id,
-                        exercise: recordData.exercise,
                         weight: recordData.weight,
                         rep: recordData.rep,
+                        exercise_id: recordData.exercise_id,
+                        exercise: recordData.exercise,
                         exercise_date: recordData.exercise_date
                     });
                     setCategoryState({
-                        id: recordData.exercise?.category?.id,
-                        name: recordData.exercise?.category?.name
+                        id: recordData.exercise?.category?.id || 0,
+                        name: recordData.exercise?.category?.name || ''
                     });
                 } catch (error) {
                     console.error('Failed to fetch record data:', error);
@@ -135,17 +158,19 @@ export const ExerciseRecordForm = ({ onDataSubmit, onDataDelete, recordId }: Fun
         const exerciseId = dataset.exerciseId;
         const exerciseName = dataset.exerciseName;
         const categoryId = dataset.categoryId;
-        const categoryName = dataset.categoryName;
+        
+        const selectedCategory = categoriesState.categories.find(c => c.id === parseInt(categoryId || '0'));
+        
         setInputData((prevData: any) => ({
             ...prevData,
+            exercise_id: exerciseId,
             exercise: {
-                ...prevData.exercise,
                 id: exerciseId,
                 name: exerciseName,
-                category: {
-                    ...prevData.exercise.category,
-                    id: categoryId,
-                    name: categoryName
+                category_id: categoryId,
+                category: selectedCategory || {
+                    id: 0,
+                    name: ''
                 }
             }
         }));
@@ -192,8 +217,7 @@ export const ExerciseRecordForm = ({ onDataSubmit, onDataDelete, recordId }: Fun
                         <option key={`exercise_${exercise.id}`} 
                             data-exercise-id={exercise.id}
                             data-exercise-name={exercise.name}
-                            data-category-id={exercise?.category?.id}
-                            data-category-name={exercise?.category?.name}>
+                            data-category-id={exercise.category_id}>
                             {exercise.name}
                         </option>
                     ))}

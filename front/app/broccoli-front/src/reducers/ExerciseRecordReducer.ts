@@ -1,5 +1,7 @@
-import { ExerciseRecord } from '@src/types/exerciseRecord';
+import type { components } from '@src/api/generated';
 import { RequestStates, ActionTypes } from '@src/utils/constants';
+
+type ExerciseRecord = components['schemas']['ExerciseRecordResponse'];
 
 type ExerciseRecordState = {
     exerciseRecords: ExerciseRecord[],
