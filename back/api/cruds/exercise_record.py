@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlmodel import select
+from sqlmodel import select, func
 from sqlalchemy.orm import joinedload
 from typing import List, Optional
 from datetime import date
@@ -30,17 +30,39 @@ async def create_exercise_record(
     return rec_with_relations
 
 
-async def get_exercise_records(db: AsyncSession, target_date: Optional[date] = None) -> List[ExerciseRecord]:
+async def get_exercise_records(
+    db: AsyncSession, 
+    target_date: Optional[date] = None,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None
+) -> List[ExerciseRecord]:
     """指定された日付のレコードを返す。`target_date` が None の場合は全てのレコードを返す。"""
     stmt = select(ExerciseRecord).options(
         joinedload(ExerciseRecord.exercise).joinedload(Exercise.category)
-    )
+    ).order_by(ExerciseRecord.exercise_date.desc(), ExerciseRecord.id.desc())
+    
+    if target_date is not None:
+        stmt = stmt.where(ExerciseRecord.exercise_date == target_date)
+    
+    if offset is not None:
+        stmt = stmt.offset(offset)
+    
+    if limit is not None:
+        stmt = stmt.limit(limit)
+    
+    result = await db.execute(stmt)
+    return result.scalars().all()
+
+
+async def count_exercise_records(db: AsyncSession, target_date: Optional[date] = None) -> int:
+    """レコードの総件数を取得"""
+    stmt = select(func.count(ExerciseRecord.id))
     
     if target_date is not None:
         stmt = stmt.where(ExerciseRecord.exercise_date == target_date)
     
     result = await db.execute(stmt)
-    return result.scalars().all()
+    return result.scalar()
 
 
 async def get_exercise_record_by_id(db: AsyncSession, record_id: int) -> Optional[ExerciseRecord]:

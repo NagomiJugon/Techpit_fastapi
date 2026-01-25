@@ -15,9 +15,20 @@ router = APIRouter()
 @router.get("/exercise_records", response_model=List[exercise_record_schema.ExerciseRecord])
 async def list_exercise_records(
     date: Optional[date] = Query(None, description="Filter records by YYYY-MM-DD"),
+    limit: Optional[int] = Query(None, description="Maximum number of records to return"),
+    offset: Optional[int] = Query(None, description="Number of records to skip"),
     db: AsyncSession = Depends(get_db),
 ):
-    return await exercise_record_crud.get_exercise_records(db, date)
+    return await exercise_record_crud.get_exercise_records(db, date, limit, offset)
+
+
+@router.get("/exercise_records/count", response_model=dict)
+async def count_exercise_records(
+    date: Optional[date] = Query(None, description="Filter records by YYYY-MM-DD"),
+    db: AsyncSession = Depends(get_db),
+):
+    count = await exercise_record_crud.count_exercise_records(db, date)
+    return {"count": count}
 
 
 @router.post("/exercise_records", response_model=exercise_record_schema.ExerciseRecordCreateResponse)
