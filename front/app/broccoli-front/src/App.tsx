@@ -20,7 +20,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path='/dashboard' element={<Workout />}></Route>
+        <Route path='/dashboard' element={<Dashboard />}></Route>
         <Route path='/workout' element={<Workout />}></Route>
         <Route path='/history' element={<History />}></Route>
         <Route path='/calendar' element={<Calendar />}></Route>
