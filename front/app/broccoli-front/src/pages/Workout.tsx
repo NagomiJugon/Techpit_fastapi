@@ -17,7 +17,11 @@ export const Workout = () => {
 
     const fetchRecords = async () => {
         try {
-            const response = await axios.get<ExerciseRecord[]>(`${API_URL}/exercise_records`);
+            // 本日の日付をYYYY-MM-DD形式で取得
+            const today = new Date().toISOString().split('T')[0];
+            const response = await axios.get<ExerciseRecord[]>(`${API_URL}/exercise_records`, {
+                params: { date: today }
+            });
             setRecords(response.data);
         } catch (error) {
             console.error('Failed to fetch records:', error);
