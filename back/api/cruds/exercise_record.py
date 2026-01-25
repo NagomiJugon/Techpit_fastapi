@@ -31,13 +31,14 @@ async def create_exercise_record(
 
 
 async def get_exercise_records(db: AsyncSession, target_date: Optional[date] = None) -> List[ExerciseRecord]:
-    """指定された日付のレコードを返す。`target_date` が None の場合は本日分を返す。"""
-    if target_date is None:
-        target_date = date.today()
-
-    stmt = select(ExerciseRecord).where(ExerciseRecord.exercise_date == target_date).options(
+    """指定された日付のレコードを返す。`target_date` が None の場合は全てのレコードを返す。"""
+    stmt = select(ExerciseRecord).options(
         joinedload(ExerciseRecord.exercise).joinedload(Exercise.category)
     )
+    
+    if target_date is not None:
+        stmt = stmt.where(ExerciseRecord.exercise_date == target_date)
+    
     result = await db.execute(stmt)
     return result.scalars().all()
 
