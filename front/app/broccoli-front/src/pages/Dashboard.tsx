@@ -99,12 +99,12 @@ export const Dashboard = () => {
         );
         const thisWeekDays = thisWeekDates.size;
 
-        // 総セット数
-        const totalSets = data.reduce((sum, r) => sum + (r.set || 0), 0);
+        // 総トレーニング回数
+        const totalExercises = data.length;
 
         setStats({
             totalWorkoutDays,
-            totalSets,
+            totalSets: totalExercises,
             thisMonthDays,
             thisWeekDays,
         });
@@ -237,12 +237,12 @@ export const Dashboard = () => {
 
                                 <div className="bg-white dark:bg-neutral-800 shadow-md rounded-lg p-6">
                                     <h3 className="text-sm font-medium text-gray-500 dark:text-neutral-400">
-                                        総セット数
+                                        総トレーニング回数
                                     </h3>
                                     <p className="text-3xl font-bold text-gray-800 dark:text-neutral-200 mt-2">
                                         {stats.totalSets}
                                     </p>
-                                    <p className="text-xs text-gray-500 dark:text-neutral-400 mt-1">セット</p>
+                                    <p className="text-xs text-gray-500 dark:text-neutral-400 mt-1">回</p>
                                 </div>
                             </div>
 
@@ -327,9 +327,6 @@ export const Dashboard = () => {
                                                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-400 uppercase">
                                                         回数
                                                     </th>
-                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-neutral-400 uppercase">
-                                                        セット
-                                                    </th>
                                                 </tr>
                                             </thead>
                                             <tbody className="bg-white dark:bg-neutral-800 divide-y divide-gray-200 dark:divide-neutral-700">
@@ -349,9 +346,6 @@ export const Dashboard = () => {
                                                         </td>
                                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
                                                             {record.rep}
-                                                        </td>
-                                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-neutral-200">
-                                                            {record.set}
                                                         </td>
                                                     </tr>
                                                 ))}

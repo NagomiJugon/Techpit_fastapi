@@ -604,12 +604,6 @@ export const Calendar = () => {
                                                                     {record.rep} 回
                                                                 </span>
                                                             </div>
-                                                            <div className="col-span-2">
-                                                                <span className="text-gray-600 dark:text-neutral-400">セット:</span>
-                                                                <span className="ml-2 font-medium text-gray-800 dark:text-neutral-200">
-                                                                    {record.set}
-                                                                </span>
-                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
