@@ -12,6 +12,7 @@ type Exercise = components['schemas']['ExerciseResponse'];
 export const History = () => {
     const [records, setRecords] = useState<ExerciseRecord[]>([]);
     const [filteredRecords, setFilteredRecords] = useState<ExerciseRecord[]>([]);
+    const [totalCount, setTotalCount] = useState<number>(0);
     const [categories, setCategories] = useState<Category[]>([]);
     const [exercises, setExercises] = useState<Exercise[]>([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -19,21 +20,14 @@ export const History = () => {
     const [selectedExercise, setSelectedExercise] = useState<number>(0);
     const [startDate, setStartDate] = useState<string>('');
     const [endDate, setEndDate] = useState<string>('');
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const ITEMS_PER_PAGE = 100;
 
     useEffect(() => {
-        fetchRecords();
         fetchCategories();
         fetchExercises();
     }, []);
 
-    // 初回データ取得後のみフィルタリング
-    useEffect(() => {
-        if (records.length > 0) {
-            setFilteredRecords(records);
-        } else {
-            setFilteredRecords([]);
-        }
-    }, [records]);
 
     const fetchCategories = async () => {
         try {
@@ -53,12 +47,42 @@ export const History = () => {
         }
     };
 
-    const fetchRecords = async () => {
+    const fetchRecords = async (page: number = 1) => {
         setIsLoading(true);
         try {
-            const response = await axios.get<ExerciseRecord[]>(`${API_URL}/exercise_records`);
-            console.log('Fetched records:', response.data);
-            setRecords(response.data);
+            const offset = (page - 1) * ITEMS_PER_PAGE;
+            const params: any = {
+                limit: ITEMS_PER_PAGE,
+                offset: offset
+            };
+
+            // 日付フィルターはバックエンドで対応していないため、フロントエンドでフィルタリングする
+            // まず全件数を取得
+            const countResponse = await axios.get<{ count: number }>(`${API_URL}/exercise_records/count`);
+            const allRecords = await axios.get<ExerciseRecord[]>(`${API_URL}/exercise_records`);
+            
+            let filtered = allRecords.data;
+            
+            // クライアントサイドフィルタリング
+            if (selectedCategory !== 0) {
+                filtered = filtered.filter(record => record.exercise?.category?.id === selectedCategory);
+            }
+            if (selectedExercise !== 0) {
+                filtered = filtered.filter(record => record.exercise_id === selectedExercise);
+            }
+            if (startDate) {
+                filtered = filtered.filter(record => (record.exercise_date || '') >= startDate);
+            }
+            if (endDate) {
+                filtered = filtered.filter(record => (record.exercise_date || '') <= endDate);
+            }
+            
+            // ページネーション
+            const start = (page - 1) * ITEMS_PER_PAGE;
+            const paginatedData = filtered.slice(start, start + ITEMS_PER_PAGE);
+            
+            setTotalCount(filtered.length);
+            setFilteredRecords(paginatedData);
         } catch (error) {
             console.error('Failed to fetch records:', error);
             alert('記録の読み込みに失敗しました');
@@ -68,48 +92,8 @@ export const History = () => {
     };
 
     const handleSearch = () => {
-        console.log('Applying filters:', { selectedCategory, selectedExercise, startDate, endDate });
-        console.log('Total records:', records.length);
-        applyFilters();
-    };
-
-    const applyFilters = () => {
-        let filtered = [...records];
-        console.log('Before filter:', filtered.length);
-
-        // カテゴリーフィルター
-        if (selectedCategory !== 0) {
-            filtered = filtered.filter(record => record.exercise?.category?.id === selectedCategory);
-            console.log('After category filter:', filtered.length);
-        }
-
-        // 種目フィルター
-        if (selectedExercise !== 0) {
-            filtered = filtered.filter(record => record.exercise_id === selectedExercise);
-            console.log('After exercise filter:', filtered.length);
-        }
-
-        // 日付フィルター
-        if (startDate) {
-            filtered = filtered.filter(record => {
-                const recordDate = record.exercise_date || '';
-                console.log(`Comparing recordDate: ${recordDate} >= startDate: ${startDate} = ${recordDate >= startDate}`);
-                return recordDate >= startDate;
-            });
-            console.log('After start date filter:', filtered.length);
-        }
-
-        if (endDate) {
-            filtered = filtered.filter(record => {
-                const recordDate = record.exercise_date || '';
-                console.log(`Comparing recordDate: ${recordDate} <= endDate: ${endDate} = ${recordDate <= endDate}`);
-                return recordDate <= endDate;
-            });
-            console.log('After end date filter:', filtered.length);
-        }
-
-        console.log('Final filtered:', filtered.length);
-        setFilteredRecords(filtered);
+        setCurrentPage(1);
+        fetchRecords(1);
     };
 
     const handleDeleteRecord = async (recordId: number) => {
@@ -130,7 +114,9 @@ export const History = () => {
         setSelectedExercise(0);
         setStartDate('');
         setEndDate('');
-        setFilteredRecords(records);
+        setCurrentPage(1);
+        setFilteredRecords([]);
+        setTotalCount(0);
     };
 
     // カテゴリーに応じて種目をフィルタリング
@@ -142,6 +128,29 @@ export const History = () => {
     const handleCategoryChange = (categoryId: number) => {
         setSelectedCategory(categoryId);
         setSelectedExercise(0);
+    };
+
+    // ページネーション計算
+    const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, totalCount);
+
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
+        fetchRecords(page);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const handlePrevPage = () => {
+        if (currentPage > 1) {
+            handlePageChange(currentPage - 1);
+        }
+    };
+
+    const handleNextPage = () => {
+        if (currentPage < totalPages) {
+            handlePageChange(currentPage + 1);
+        }
     };
 
     return (
@@ -241,9 +250,9 @@ export const History = () => {
                             <div className="p-8 text-center text-gray-500 dark:text-neutral-400">
                                 読み込み中...
                             </div>
-                        ) : records.length === 0 ? (
+                        ) : totalCount === 0 ? (
                             <div className="p-8 text-center text-gray-500 dark:text-neutral-400">
-                                データがありません
+                                検索ボタンを押して検索してください
                             </div>
                         ) : filteredRecords.length === 0 ? (
                             <div className="p-8 text-center text-gray-500 dark:text-neutral-400">
@@ -307,10 +316,69 @@ export const History = () => {
                         )}
                     </div>
 
+                    {/* ページネーション */}
+                    {!isLoading && totalCount > 0 && totalPages > 1 && (
+                        <div className="mt-6 bg-white dark:bg-neutral-800 shadow-md rounded px-6 py-4">
+                            <div className="flex items-center justify-between">
+                                <div className="text-sm text-gray-600 dark:text-neutral-400">
+                                    {startIndex + 1} - {endIndex} 件 / 全 {totalCount} 件
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        onClick={handlePrevPage}
+                                        disabled={currentPage === 1}
+                                        className="px-3 py-2 text-sm font-medium text-gray-700 dark:text-neutral-200 bg-white dark:bg-neutral-700 border border-gray-300 dark:border-neutral-600 rounded hover:bg-gray-50 dark:hover:bg-neutral-600 disabled:opacity-50 disabled:cursor-not-allowed">
+                                        前へ
+                                    </button>
+                                    
+                                    <div className="flex items-center gap-1">
+                                        {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+                                            let pageNum;
+                                            if (totalPages <= 5) {
+                                                pageNum = i + 1;
+                                            } else if (currentPage <= 3) {
+                                                pageNum = i + 1;
+                                            } else if (currentPage >= totalPages - 2) {
+                                                pageNum = totalPages - 4 + i;
+                                            } else {
+                                                pageNum = currentPage - 2 + i;
+                                            }
+                                            
+                                            return (
+                                                <button
+                                                    key={pageNum}
+                                                    onClick={() => handlePageChange(pageNum)}
+                                                    className={`px-3 py-2 text-sm font-medium rounded ${
+                                                        currentPage === pageNum
+                                                            ? 'bg-blue-500 text-white'
+                                                            : 'text-gray-700 dark:text-neutral-200 bg-white dark:bg-neutral-700 border border-gray-300 dark:border-neutral-600 hover:bg-gray-50 dark:hover:bg-neutral-600'
+                                                    }`}>
+                                                    {pageNum}
+                                                </button>
+                                            );
+                                        })}
+                                    </div>
+                                    
+                                    <button
+                                        onClick={handleNextPage}
+                                        disabled={currentPage === totalPages}
+                                        className="px-3 py-2 text-sm font-medium text-gray-700 dark:text-neutral-200 bg-white dark:bg-neutral-700 border border-gray-300 dark:border-neutral-600 rounded hover:bg-gray-50 dark:hover:bg-neutral-600 disabled:opacity-50 disabled:cursor-not-allowed">
+                                        次へ
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     {/* 統計情報 */}
                     <div className="mt-6 bg-white dark:bg-neutral-800 shadow-md rounded px-6 py-4">
                         <p className="text-sm text-gray-600 dark:text-neutral-400">
-                            合計: <span className="font-bold text-gray-800 dark:text-neutral-200">{filteredRecords.length}</span> 件
+                            合計: <span className="font-bold text-gray-800 dark:text-neutral-200">{totalCount}</span> 件
+                            {totalCount > ITEMS_PER_PAGE && (
+                                <span className="ml-2">
+                                    (ページ {currentPage} / {totalPages})
+                                </span>
+                            )}
                         </p>
                     </div>
                 </div>
