@@ -8,6 +8,7 @@ import { Dashboard } from '@src/pages/Dashboard';
 import { CategoryManagement } from '@src/pages/Category';
 import { ExerciseManagement } from '@src/pages/Exercise';
 import { History } from '@src/pages/History';
+import { Calendar } from '@src/pages/Calendar';
 
 declare global {
   interface Window {
@@ -22,6 +23,7 @@ function App() {
         <Route path='/dashboard' element={<Workout />}></Route>
         <Route path='/workout' element={<Workout />}></Route>
         <Route path='/history' element={<History />}></Route>
+        <Route path='/calendar' element={<Calendar />}></Route>
         <Route path='/categories' element={<CategoryManagement />}></Route>
         <Route path='/exercises' element={<ExerciseManagement />}></Route>
         <Route path='/login' element={<Workout />}></Route>
