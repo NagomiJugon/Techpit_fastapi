@@ -16,3 +16,41 @@ code {
     monospace;
 }
 
+/* モダンなスクロールバーのスタイル */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #9ca3af transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: #9ca3af;
+  border-radius: 9999px;
+  transition: background 0.2s;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}
+
+/* ダークモード時のスクロールバー */
+.dark * {
+  scrollbar-color: #525252 transparent;
+}
+
+.dark *::-webkit-scrollbar-thumb {
+  background: #525252;
+}
+
+.dark *::-webkit-scrollbar-thumb:hover {
+  background: #737373;
+}
+
