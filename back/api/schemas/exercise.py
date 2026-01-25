@@ -18,7 +18,7 @@ class ExerciseResponse(ExerciseBase):
     id: int
     category_id: int
 
-    model_config = {"from_attributes": True}
+    model_config = {"from_attributes": True, "json_schema_extra": {"example": {"id": 0, "name": "", "category_id": 0}}}
 
 
 # 後方互換性のためのエイリアス

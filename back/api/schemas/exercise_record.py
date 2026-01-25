@@ -32,7 +32,7 @@ class ExerciseRecordResponse(ExerciseRecordBase):
     exercise: ExerciseInRecordResponse
     exercise_date: date = Field(default_factory=date.today)
 
-    model_config = {"from_attributes": True}
+    model_config = {"from_attributes": True, "json_schema_extra": {"example": {"id": 1, "weight": 30, "rep": 10, "exercise_id": 1, "exercise_date": "2025-01-25"}}}
 
 
 # 後方互換性のためのエイリアス

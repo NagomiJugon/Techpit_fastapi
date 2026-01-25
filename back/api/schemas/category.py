@@ -9,7 +9,7 @@ class CategoryBase(SQLModel):
 class Category(CategoryBase):
     id: int
 
-    model_config = {"from_attributes": True}
+    model_config = {"from_attributes": True, "json_schema_extra": {"example": {"id": 0, "name": ""}}}
 
 
 class CategoryCreate(CategoryBase):
