@@ -8,7 +8,7 @@ import { Body } from '@src/components/Content/Table/Body';
 import type { components } from '@src/api/generated';
 import axios from 'axios';
 import { API_URL } from '@src/utils/constants';
-import { Tr } from '@src/components/Content/Table/Tr';
+import { ExerciseRecordRow } from '@src/components/Content/Table/ExerciseRecordRow';
 
 type ExerciseRecord = components['schemas']['ExerciseRecordResponse'];
 
@@ -61,7 +61,7 @@ export const Workout = () => {
                             <Header />
                             <Body>
                                 {records.map((r) => (
-                                    <Tr key={r.id} record={r} onRefresh={fetchRecords} />
+                                    <ExerciseRecordRow key={r.id} record={r} onRefresh={fetchRecords} />
                                 ))}
                             </Body>
                         </Table>
