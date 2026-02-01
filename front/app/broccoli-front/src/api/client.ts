@@ -8,7 +8,18 @@
 
 import type { components, paths } from "./generated";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+// Docker環境対応: 環境変数で指定されたURLを使用、なければlocalhost:8000を使用
+const API_BASE_URL = (() => {
+  // 環境変数でAPI_BASE_URLが指定されていたら、その値を使用（Docker環境での正しいホスト名など）
+  if (import.meta.env.VITE_API_BASE_URL) {
+    console.log('API_BASE_URL from VITE_API_BASE_URL:', import.meta.env.VITE_API_BASE_URL);
+    return import.meta.env.VITE_API_BASE_URL;
+  }
+  // デフォルトはホストマシンのlocalhost:8000
+  const defaultUrl = "http://localhost:8000";
+  console.log('API_BASE_URL from default:', defaultUrl);
+  return defaultUrl;
+})();
 
 /**
  * 型エイリアスの定義

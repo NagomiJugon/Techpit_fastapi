@@ -22,4 +22,8 @@ export default defineConfig({
       '@src': path.resolve(__dirname, './src'),
     },
   },
+  // 環境変数を明示的に定義（デフォルトはVITE_プレフィックスのものが読み込まれる）
+  define: {
+    'process.env.VITE_API_BASE_URL': JSON.stringify(process.env.VITE_API_BASE_URL || 'http://localhost:8000'),
+  },
 })

@@ -21,7 +21,8 @@ services:
     ports:
       - 3001:3001
     environment:
-      - REACT_APP_API_URL=http://backend:8000  # React 側で FastAPI の URL を環境変数に設定
+      # Viteの環境変数: ブラウザはホストマシンで実行されるため、localhost:8000を参照
+      - VITE_API_BASE_URL=http://localhost:8000
     # Vite 開発サーバを起動
     command: sh -c 'cd /usr/src/app/broccoli-front && npm install && npm run dev'
     networks:
